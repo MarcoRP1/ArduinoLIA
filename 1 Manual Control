@@ -1,0 +1,24 @@
+void setup() {
+pinMode (6, OUTPUT);
+
+Serial.begin(9600);
+}
+
+void loop() 
+{
+
+float ldrvalue = analogRead (A0); 
+float ptvalue = analogRead (A1);
+float writeval = (ptvalue/4);
+
+analogWrite (6, writeval);
+
+Serial.print(ldrvalue);
+Serial.print("\t");
+Serial.print(ptvalue);
+Serial.print("\t");
+Serial.println(writeval);
+Serial.print("\t");
+
+delay(10);
+}
