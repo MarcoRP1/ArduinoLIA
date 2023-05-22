@@ -1,24 +1,23 @@
 void setup() {
-pinMode (6, OUTPUT);
+pinMode (6, OUTPUT); // set LED pin as output
 
-Serial.begin(9600);
+Serial.begin(9600); // begin serial communication
 }
 
 void loop() 
 {
 
-float ldrvalue = analogRead (A0); 
-float ptvalue = analogRead (A1);
-float writeval = (ptvalue/4);
+float ldrvalue = analogRead (A0); // read the LDR value
+float ptvalue = analogRead (A1); // read the potentiometer value
+float writeval = (ptvalue/4); // value to write to the LED
 
-analogWrite (6, writeval);
+analogWrite (6, writeval); // write the calculated value to the LED
 
 Serial.print(ldrvalue);
 Serial.print("\t");
-Serial.print(ptvalue);
-Serial.print("\t");
+Serial.print(ptvalue); // serial print the LDR, potentiometer
+Serial.print("\t");    // and write values
 Serial.println(writeval);
 Serial.print("\t");
 
-delay(10);
 }
