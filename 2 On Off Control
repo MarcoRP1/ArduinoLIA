@@ -5,12 +5,12 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 int red = 2;
 int orng = 3;
-int yllo = 4;
+int yllo = 4; // labeling the pushbuttons
 int grn = 5;
 
 
 int PV = 0;
-int CO = 0;
+int CO = 0; // storing the variables as integers
 int HYS = 50;
 int SPT = 500;
 
@@ -20,7 +20,7 @@ int redlastpbval;
 int redpresscount;
 
 int orngpbval;
-int ornglastpbval;
+int ornglastpbval; // establishing count values for pushbuttons
 int orngpresscount;
 
 int yllopbval;
@@ -30,20 +30,19 @@ int yllopresscount;
 void setup() {
 
 
+lcd.begin(16, 2); // start LCD display
 
-lcd.begin(16, 2); // set up the LCD's number of columns and rows:  
+pinMode (6, OUTPUT); // establish LED pin as output
 
-pinMode (6, OUTPUT);
+digitalWrite (6,1); // setup to start process for LED
 
-Serial.begin(9600);
-
-digitalWrite (6,1);
+Serial.begin(9600); // begin serial  communication
 
 pinMode (red, INPUT_PULLUP);
 redpbval=digitalRead(red);
 
 pinMode (orng, INPUT_PULLUP);
-orngpbval=digitalRead(orng);
+orngpbval=digitalRead(orng); // pinModes for pushbuttons
 
 pinMode (yllo, INPUT_PULLUP);
 yllopbval=digitalRead(yllo);
@@ -58,43 +57,43 @@ redlastpbval = redpbval;
  if (redpbval == 1 && redlastpbval == 0){
   redpresscount = redpresscount + 1;
   
- }
+ } // switch screen & counter (red PB)
 
  if (redpresscount >= 2) {
   redpresscount = 0;
   
  }  
 
-int PV = analogRead (A0); 
+int PV = analogRead (A0); // read the LDR value
  
 
 if (PV <= (SPT-HYS))
   {
   CO=0;
-  }
+  } //limiter for the control output value
 
 if (PV >= (SPT+HYS))
   {
   CO=255;
   }
 
-analogWrite (6, CO);
+analogWrite (6, CO); // write the CO value to the LED
 
 Serial.print("PV = ");
 Serial.print(PV);
 Serial.print("\t");
 Serial.print("CO = ");
-Serial.print(CO);
+Serial.print(CO); // serial print the PV, CO, and SP values
 Serial.print("\t");
 Serial.print("SPT = ");
 Serial.println(SPT);
 
 
-if (redpresscount == 0) {
+if (redpresscount == 0) { // when red PB is at 0 presses
   lcd.setCursor(0, 0); 
   lcd.print("SPT = "); 
   lcd.print(SPT);
-  lcd.print("   ");
+  lcd.print("   "); // LCD print the following
 
   lcd.setCursor(0, 1); 
   lcd.print("PV = "); 
@@ -106,22 +105,22 @@ if (redpresscount == 0) {
 
  if (orngpbval == 1 && ornglastpbval == 0){
   (SPT = SPT + 100);
- }
+ } // orange PB will add 100 to the set point
 
  yllolastpbval = yllopbval;
  yllopbval = digitalRead (yllo);
 
  if (yllopbval == 1 && yllolastpbval == 0){
   (SPT = SPT - 100);
- }
+ } // yellow PB will subtract 100 from the set point
 
-} // end of spt
+} // end of red PB = 0
 
-if (redpresscount == 1) {
+if (redpresscount == 1) { // when red PB is at 1 press
   lcd.setCursor(0, 0); 
   lcd.print("HYS = "); 
   lcd.print(HYS);
-  lcd.print("   ");
+  lcd.print("   "); // LCD print the following
 
   lcd.setCursor(0, 1); 
   lcd.print("CO = "); 
@@ -129,21 +128,22 @@ if (redpresscount == 1) {
   lcd.print("   ");
 
 
-  ornglastpbval = orngpbval;
+ ornglastpbval = orngpbval;
  orngpbval = digitalRead (orng);
 
  if (orngpbval == 1 && ornglastpbval == 0){
   (HYS = HYS + 10);
- }
+ } // orange PB will add 10 to hysteresis
 
  yllolastpbval = yllopbval;
  yllopbval = digitalRead (yllo);
 
  if (yllopbval == 1 && yllolastpbval == 0){
   (HYS = HYS - 10);
- }
+ } // yellow PB will subtract 10 from the hysteresis
 
- } // end of hys
+ } // end of red PB = 1
 
 
 } // end of loop
+
