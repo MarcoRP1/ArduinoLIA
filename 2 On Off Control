@@ -1,0 +1,149 @@
+#include <LiquidCrystal.h> // include LCD library
+
+const int rs = 7, en = 8, d4 = 10, d5 = 11, d6 = 12, d7 = 13;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+int red = 2;
+int orng = 3;
+int yllo = 4;
+int grn = 5;
+
+
+int PV = 0;
+int CO = 0;
+int HYS = 50;
+int SPT = 500;
+
+
+int redpbval;
+int redlastpbval;
+int redpresscount;
+
+int orngpbval;
+int ornglastpbval;
+int orngpresscount;
+
+int yllopbval;
+int yllolastpbval;
+int yllopresscount;
+
+void setup() {
+
+
+
+lcd.begin(16, 2); // set up the LCD's number of columns and rows:  
+
+pinMode (6, OUTPUT);
+
+Serial.begin(9600);
+
+digitalWrite (6,1);
+
+pinMode (red, INPUT_PULLUP);
+redpbval=digitalRead(red);
+
+pinMode (orng, INPUT_PULLUP);
+orngpbval=digitalRead(orng);
+
+pinMode (yllo, INPUT_PULLUP);
+yllopbval=digitalRead(yllo);
+
+}
+
+void loop() {  
+
+redlastpbval = redpbval;
+ redpbval = digitalRead (red);
+ 
+ if (redpbval == 1 && redlastpbval == 0){
+  redpresscount = redpresscount + 1;
+  
+ }
+
+ if (redpresscount >= 2) {
+  redpresscount = 0;
+  
+ }  
+
+int PV = analogRead (A0); 
+ 
+
+if (PV <= (SPT-HYS))
+  {
+  CO=0;
+  }
+
+if (PV >= (SPT+HYS))
+  {
+  CO=255;
+  }
+
+analogWrite (6, CO);
+
+Serial.print("PV = ");
+Serial.print(PV);
+Serial.print("\t");
+Serial.print("CO = ");
+Serial.print(CO);
+Serial.print("\t");
+Serial.print("SPT = ");
+Serial.println(SPT);
+
+
+if (redpresscount == 0) {
+  lcd.setCursor(0, 0); 
+  lcd.print("SPT = "); 
+  lcd.print(SPT);
+  lcd.print("   ");
+
+  lcd.setCursor(0, 1); 
+  lcd.print("PV = "); 
+  lcd.print(PV);
+  lcd.print("   ");
+ 
+ ornglastpbval = orngpbval;
+ orngpbval = digitalRead (orng);
+
+ if (orngpbval == 1 && ornglastpbval == 0){
+  (SPT = SPT + 100);
+ }
+
+ yllolastpbval = yllopbval;
+ yllopbval = digitalRead (yllo);
+
+ if (yllopbval == 1 && yllolastpbval == 0){
+  (SPT = SPT - 100);
+ }
+
+} // end of spt
+
+if (redpresscount == 1) {
+  lcd.setCursor(0, 0); 
+  lcd.print("HYS = "); 
+  lcd.print(HYS);
+  lcd.print("   ");
+
+  lcd.setCursor(0, 1); 
+  lcd.print("CO = "); 
+  lcd.print(CO);
+  lcd.print("   ");
+
+
+  ornglastpbval = orngpbval;
+ orngpbval = digitalRead (orng);
+
+ if (orngpbval == 1 && ornglastpbval == 0){
+  (HYS = HYS + 10);
+ }
+
+ yllolastpbval = yllopbval;
+ yllopbval = digitalRead (yllo);
+
+ if (yllopbval == 1 && yllolastpbval == 0){
+  (HYS = HYS - 10);
+ }
+
+ } // end of hys
+
+
+} // end of loop
