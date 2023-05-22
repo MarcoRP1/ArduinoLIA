@@ -19,5 +19,5 @@ Serial.print(ptvalue); // serial print the LDR, potentiometer
 Serial.print("\t");    // and write values
 Serial.println(writeval);
 Serial.print("\t");
-h
+
 }
