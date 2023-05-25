@@ -1,1 +1,176 @@
+#include <LiquidCrystal.h> // include LCD library
 
+const int rs = 7, en = 8, d4 = 10, d5 = 11, d6 = 12, d7 = 13;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+int red = 2;
+int orng = 3;
+int yllo = 4;
+int grn = 5;
+
+
+int PV = 0; // variable
+int CO = 0; // variable
+int SSE = 0; // variable
+
+int SPT = 200; // adjustable value
+float PG = 2.00; // adjustable value
+
+
+int redpbval;
+int redlastpbval;
+int redpresscount;
+
+int orngpbval;
+int ornglastpbval;
+int orngpresscount;
+
+int yllopbval;
+int yllolastpbval;
+int yllopresscount;
+
+void setup() {
+
+
+
+lcd.begin(16, 2); // set up the LCD's number of columns and rows:  
+
+pinMode (6, OUTPUT);
+
+Serial.begin(9600);
+
+
+pinMode (red, INPUT_PULLUP);
+redpbval=digitalRead(red);
+
+pinMode (orng, INPUT_PULLUP);
+orngpbval=digitalRead(orng);
+
+pinMode (yllo, INPUT_PULLUP);
+yllopbval=digitalRead(yllo);
+
+}
+
+void loop() {  
+
+
+int PV = analogRead (A0); 
+
+SSE = SPT-PV;
+
+if (SSE < 0){
+(SSE = SSE*-1);
+
+}
+
+CO = PG*SSE;
+ 
+if (CO > 255)
+  {
+  CO=255;
+  }
+
+if (CO < 0)
+  {
+  CO=0;
+  }
+
+
+analogWrite (6, CO);
+
+redlastpbval = redpbval;
+ redpbval = digitalRead (red);
+ 
+ if (redpbval == 1 && redlastpbval == 0){
+  redpresscount = redpresscount + 1;
+  
+ }
+
+ if (redpresscount >= 3) {
+  redpresscount = 0;
+  
+ }  
+
+
+Serial.print ("SPT = ");
+Serial.print(SPT);
+Serial.print ("/t");
+Serial.print ("PV = ");
+Serial.print(PV);
+Serial.print ("/t");
+Serial.print ("CO = ");
+Serial.print(CO);
+Serial.print ("/t");
+Serial.print ("SSE = ");
+Serial.println(SSE);
+Serial.print ("/t");
+
+if (redpresscount == 0) {
+  lcd.setCursor(0, 0); 
+  lcd.print("SPT = "); 
+  lcd.print(SPT);
+  lcd.print("   ");
+
+  lcd.setCursor(0, 1); 
+  lcd.print("PV = "); 
+  lcd.print(PV);
+  lcd.print("   ");
+ 
+ ornglastpbval = orngpbval;
+ orngpbval = digitalRead (orng);
+
+ if (orngpbval == 1 && ornglastpbval == 0){
+  (SPT = SPT + 100);
+ }
+
+ yllolastpbval = yllopbval;
+ yllopbval = digitalRead (yllo);
+
+ if (yllopbval == 1 && yllolastpbval == 0){
+  (SPT = SPT - 100);
+ }
+
+} // end of spt
+
+if (redpresscount == 1) {
+  lcd.setCursor(0, 0); 
+  lcd.print("PG = "); 
+  lcd.print(PG);
+  lcd.print("   ");
+
+  lcd.setCursor(0, 1); 
+  lcd.print("CO = "); 
+  lcd.print(CO);
+  lcd.print("   ");
+
+
+  ornglastpbval = orngpbval;
+  orngpbval = digitalRead (orng);
+
+ if (orngpbval == 1 && ornglastpbval == 0){
+  (PG = PG + 0.4);
+ }
+
+ yllolastpbval = yllopbval;
+ yllopbval = digitalRead (yllo);
+
+ if (yllopbval == 1 && yllolastpbval == 0){
+  (PG = PG - 0.4);
+ }
+
+ } // end of pg and co
+
+ if (redpresscount == 2) {
+  lcd.setCursor(0, 0); 
+  lcd.print("SSE = "); 
+  lcd.print(SSE);
+  lcd.print("      ");
+
+  lcd.setCursor(0, 1); 
+  lcd.print("        "); 
+
+ } // end of err
+
+delay(100);
+
+} // end of loop
