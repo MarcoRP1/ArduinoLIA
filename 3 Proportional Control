@@ -79,6 +79,7 @@ redlastpbval = redpbval;
  
  if (redpbval == 1 && redlastpbval == 0){
   redpresscount = redpresscount + 1;
+  
  } // switch screen & counter (red PB)
 
  if (redpresscount >= 3) {
