@@ -5,7 +5,7 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 int red = 2;
 int orng = 3;
-int yllo = 4;
+int yllo = 4; // labeling the pushbuttons
 int grn = 5;
 
 
@@ -16,7 +16,7 @@ int SSE = 0; // variable
 int SPT = 200; // adjustable value
 float PG = 0.1; // adjustable value
 float IG = 0.1; // adjustable value
-int IntegralAction;
+int IntegralAction; // variable
 
 unsigned long previousMillis = 0;
 const long interval = 100;
