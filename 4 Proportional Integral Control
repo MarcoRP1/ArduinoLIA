@@ -1,3 +1,11 @@
+// This project consists of establishing a variable set point, and having the LED adjust its intensity until
+// the PV value is the same as the set point. This will happen by reducing the error by multiplying it by 
+// a proportional gain, then to multiply the remaining error by the integral action, which will solve the
+// error margin more rapidly. The addition of both factors then becomes the control output, and then the 
+// process value will oscillate until it reaches the set point. The stabilization will happen much quicker 
+// than on proportional control.
+
+
 #include <LiquidCrystal.h> // include LCD library
 
 const int rs = 7, en = 8, d4 = 10, d5 = 11, d6 = 12, d7 = 13;
