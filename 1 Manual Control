@@ -1,3 +1,9 @@
+// This project consists of changing the potentiometer to then control the LED proportionally 
+// (high voltage from potentiometer = high voltage to LED). When the potentiometer value to 
+// the arduino is high, there is little to no resistance; when it is low, it means there is 
+// resistance.
+
+
 void setup() {
 pinMode (6, OUTPUT); // set LED pin as output
 
