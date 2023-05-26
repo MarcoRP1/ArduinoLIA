@@ -54,25 +54,25 @@ yllopbval=digitalRead(yllo);
 void loop() {  
 
 
-int PV = analogRead (A0); 
+int PV = analogRead (A0); // read the LDR value
 
-SSE = SPT-PV;
+SSE = SPT-PV; // calculation for steady state error
 
 if (SSE < 0){
 (SSE = SSE*-1);
-}
+} // limiter for the sse value (CO cannot be negative)
 
-CO = PG*SSE;
+CO = PG*SSE; // calculation to obtain CO
  
 if (CO > 255){
   CO=255;
-  }
+  } // limiter for the control output value
 
 if (CO < 0){
   CO=0;
   }
 
-analogWrite (6, CO);
+analogWrite (6, CO); // write the CO value to the LED
 
 redlastpbval = redpbval; 
  redpbval = digitalRead (red);
