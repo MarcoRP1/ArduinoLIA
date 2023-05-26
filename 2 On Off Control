@@ -1,3 +1,9 @@
+// This project consists of establishing a variable set point, and having the LED turn on and off repeatedly.
+// When the read value is high, the system responds by sending a low control output value to the LED, 
+// and vice versa. The hysteresis acts as a margin of error. As long as the set point doesn’t go above or 
+// below that margin, the oscillation continues.
+
+
 #include <LiquidCrystal.h> // include LCD library
 
 const int rs = 7, en = 8, d4 = 10, d5 = 11, d6 = 12, d7 = 13;
