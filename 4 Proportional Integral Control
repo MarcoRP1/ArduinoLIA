@@ -12,14 +12,14 @@ int grn = 5;
 int PV = 0; // variable
 int CO = 0; // variable
 int SSE = 0; // variable
+int IntegralAction = 0; // variable
 
 int SPT = 200; // adjustable value
 float PG = 0.1; // adjustable value
 float IG = 0.1; // adjustable value
-int IntegralAction; // variable
 
 unsigned long previousMillis = 0;
-const long interval = 100;
+const long interval = 100; // timer between measurements
 unsigned long currentMillis;
 
 int redpbval;
@@ -27,7 +27,7 @@ int redlastpbval;
 int redpresscount;
 
 int orngpbval;
-int ornglastpbval;
+int ornglastpbval; // establishing count values for pushbuttons
 int orngpresscount;
 
 int yllopbval;
@@ -38,18 +38,18 @@ void setup() {
 
 
 
-lcd.begin(16, 2); // set up the LCD's number of columns and rows:  
+lcd.begin(16, 2); // start LCD display
 
-pinMode (6, OUTPUT);
+pinMode (6, OUTPUT); // establish LED pin as output
 
-Serial.begin(9600);
+Serial.begin(9600); // begin serial  communication
 
 
 
 pinMode (red, INPUT_PULLUP);
 redpbval=digitalRead(red);
 
-pinMode (orng, INPUT_PULLUP);
+pinMode (orng, INPUT_PULLUP); // pinModes for pushbuttons
 orngpbval=digitalRead(orng);
 
 pinMode (yllo, INPUT_PULLUP);
@@ -60,26 +60,27 @@ yllopbval=digitalRead(yllo);
 void loop() {  
 
 
-int PV = analogRead (A0); 
+int PV = analogRead (A0); // read the LDR value
 
-currentMillis = millis();
+currentMillis = millis(); // use timer to calculate CO value
 
 if (currentMillis - previousMillis >= interval){
 
-previousMillis = currentMillis;
+previousMillis = currentMillis; 
 
-SSE = (SPT-PV);
+SSE = (SPT-PV); // calculation for steady state error
 
 
-IntegralAction = (IntegralAction + SSE);
-
+IntegralAction = (IntegralAction + SSE); 
+// new IntegralAction value is sum of SSE
 
 CO = ((PG*SSE)+(IG*IntegralAction))/10;
+// calculation to obtain CO
 
 if (CO > 255)
   {
   CO=255;
-  }
+  } // limiter for the control output value
 
 if (CO < 0)
   {
@@ -87,7 +88,7 @@ if (CO < 0)
   }
 }
 
-analogWrite (6, CO);
+analogWrite (6, CO); // write the CO value to the LED
 
 redlastpbval = redpbval;
  redpbval = digitalRead (red);
@@ -95,29 +96,35 @@ redlastpbval = redpbval;
  if (redpbval == 1 && redlastpbval == 0){
   redpresscount = redpresscount + 1;
   
- }
+ } // switch screen & counter (red PB)
 
  if (redpresscount >= 3) {
   redpresscount = 0;
-  
  }  
 
 
 
-Serial.print ("    SPT = ");
+Serial.print ("SPT = ");
 Serial.print(SPT);
-Serial.print ("    PV = ");
-Serial.print(PV);
-Serial.print ("    CO = ");
+Serial.print ("/t");
+Serial.print ("PV = ");
+Serial.print(PV); // serial print the SP, PV, 
+Serial.print ("/t"); // CO, SSE and IG values
+Serial.print ("CO = "); 
 Serial.print(CO);
-Serial.print ("    SSE = ");
+Serial.print ("/t");
+Serial.print ("SSE = ");
 Serial.println(SSE);
+Serial.print ("/t");
+Serial.print ("IG = ");
+Serial.println(IG);
+Serial.print ("/t");
 
-if (redpresscount == 0) {
+if (redpresscount == 0) { // when red PB is at 0 presses
   lcd.setCursor(0, 0); 
   lcd.print("SPT = "); 
   lcd.print(SPT);
-  lcd.print("   ");
+  lcd.print("   "); // LCD print the following
 
   lcd.setCursor(0, 1); 
   lcd.print("PV = "); 
@@ -129,22 +136,22 @@ if (redpresscount == 0) {
 
  if (orngpbval == 1 && ornglastpbval == 0){
   (SPT = SPT + 50);
- }
+ } // orange PB will add 50 to the set point
 
  yllolastpbval = yllopbval;
  yllopbval = digitalRead (yllo);
 
  if (yllopbval == 1 && yllolastpbval == 0){
   (SPT = SPT - 50);
- }
+ } // yellow PB will subtract 50 from the set point
 
-} // end of spt
+} // end of red PB = 0
 
-if (redpresscount == 1) {
+if (redpresscount == 1) { // when red PB is at 1 press
   lcd.setCursor(0, 0); 
   lcd.print("PG = "); 
   lcd.print(PG);
-  lcd.print("   ");
+  lcd.print("   "); // LCD print the following
 
   lcd.setCursor(0, 1); 
   lcd.print("CO = "); 
@@ -156,46 +163,43 @@ if (redpresscount == 1) {
   orngpbval = digitalRead (orng);
 
  if (orngpbval == 1 && ornglastpbval == 0){
-  (PG = PG + 0.01);
- }
+  (PG = PG + 0.1);
+ } // orange PB will add 0.1 to pGain
 
  yllolastpbval = yllopbval;
  yllopbval = digitalRead (yllo);
 
  if (yllopbval == 1 && yllolastpbval == 0){
-  (PG = PG - 0.01);
- }
+  (PG = PG - 0.1);
+ } // yellow PB will subtract 0.1 from pGain
 
- } // end of pg and co
+ } // end of red PB = 1
 
- if (redpresscount == 2) {
+ if (redpresscount == 2) { // when red PB is at 2 presses
   lcd.setCursor(0, 0); 
   lcd.print("IG = "); 
   lcd.print(IG);
-  lcd.print("   ");
+  lcd.print("   "); // LCD print the following
 
   lcd.setCursor(0, 1); 
   lcd.print("SSE = "); 
   lcd.print(SSE);
   lcd.print("      ");
 
-   ornglastpbval = orngpbval;
+  ornglastpbval = orngpbval;
   orngpbval = digitalRead (orng);
 
  if (orngpbval == 1 && ornglastpbval == 0){
-  (IG = IG + 0.1);
+  (IG = IG + 0.1); // orange PB will add 0.1 to IGain
  }
 
  yllolastpbval = yllopbval;
  yllopbval = digitalRead (yllo);
 
  if (yllopbval == 1 && yllolastpbval == 0){
-  (IG = IG - 0.1);
-
+  (IG = IG - 0.1); // yellow PB will subtract 0.1 from IGain
  }
 
- } // end of err
-
-delay(50);
+ } // end of red PB = 2
 
 } // end of loop
